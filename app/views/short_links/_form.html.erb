@@ -1,10 +1,10 @@
-<%= form_with(model: short_link) do |form| %>
-  <% if short_link.errors.any? %>
+<%= form_with model: @short_link do |form| %>
+  <% if @short_link.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(short_link.errors.count, "error") %> prohibited this short_link from being saved:</h2>
+      <h2><%= pluralize(@short_link.errors.count, "error") %> prohibited this short_link from being saved:</h2>
 
       <ul>
-        <% short_link.errors.each do |error| %>
+        <% @short_link.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
@@ -19,11 +19,6 @@
   <div class="field">
     <%= form.label :token %>
     <%= form.text_field :token %>
-  </div>
-
-  <div class="field">
-    <%= form.label :statistics_id %>
-    <%= form.text_field :statistics_id %>
   </div>
 
   <div class="actions">

@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Your statistics:</h1>
+<p>IP Address: <%= @statistic.ip %></p>
+<p>Click counts: <%= @statistic.clicks %>
+
+<hr>
+
+<h2>All statistics:</h2>
+<% @statistics.each do |statistic| %>
+  <p>IP Address: <%= statistic.ip %></p>
+  <p>Click counts: <%= statistic.clicks %>
+<% end %>

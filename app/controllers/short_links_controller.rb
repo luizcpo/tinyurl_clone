@@ -1,69 +1,59 @@
 class ShortLinksController < ApplicationController
-  before_action :set_short_link, only: %i[ show edit update destroy ]
+  before_action :set_short_link, only: %i[ redirect info ]
 
-  # GET /short_links or /short_links.json
-  def index
-    @short_links = ShortLink.all
+  # GET /:token
+  def redirect
+    if @short_link.nil?
+      render 'errors/404', status: 404 
+    else
+      create_statistic
+      redirect_to @short_link.url
+    end
+
   end
 
-  # GET /short_links/1 or /short_links/1.json
-  def show
+  # GET /:token/info
+  def info
+    @statistics = Statistic.where(short_link_id: @short_link.id)
   end
 
-  # GET /short_links/new
   def new
     @short_link = ShortLink.new
   end
 
-  # GET /short_links/1/edit
-  def edit
+  def show;
+    @short_link = ShortLink.find(params[:id])
   end
 
-  # POST /short_links or /short_links.json
   def create
     @short_link = ShortLink.new(short_link_params)
-
-    respond_to do |format|
-      if @short_link.save
-        format.html { redirect_to @short_link, notice: "Short link was successfully created." }
-        format.json { render :show, status: :created, location: @short_link }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @short_link.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /short_links/1 or /short_links/1.json
-  def update
-    respond_to do |format|
-      if @short_link.update(short_link_params)
-        format.html { redirect_to @short_link, notice: "Short link was successfully updated." }
-        format.json { render :show, status: :ok, location: @short_link }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @short_link.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /short_links/1 or /short_links/1.json
-  def destroy
-    @short_link.destroy
-    respond_to do |format|
-      format.html { redirect_to short_links_url, notice: "Short link was successfully destroyed." }
-      format.json { head :no_content }
+    
+    if @short_link.save
+      create_statistic
+      redirect_to short_link_path(id: @short_link.id), notice: "Short link was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_short_link
-      @short_link = ShortLink.find(params[:id])
+  def create_statistic
+    if @statistic
+      @statistic.update(clicks: @statistic.clicks+1, short_link_id: @short_link.id)
+    else
+      @statistic = Statistic.new(ip: request.remote_ip, short_link_id: @short_link.id)
+      @statistic.save
     end
+  end
 
-    # Only allow a list of trusted parameters through.
-    def short_link_params
-      params.require(:short_link).permit(:url, :token, :statistics_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_short_link
+    @short_link = ShortLink.find_by_token(params[:token])
+    @statistic = Statistic.find_by(ip: request.remote_ip, short_link_id: @short_link.id) if @short_link
+  end
+
+  # Only allow a list of trusted parameters through.
+  def short_link_params
+    params.require(:short_link).permit(:url, :token)
+  end
 end
