@@ -9,9 +9,6 @@ gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
-# The most popular HTML, CSS, and JavaScript framework for developing responsive, 
-# mobile first projects on the web. http://getbootstrap.com
-gem 'bootstrap', '~> 5.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
